@@ -77,6 +77,12 @@
     function reversalStatus(status) {
       return status == '1' ? '2' : '1'
     }
+
+    onMounted(() => {
+      fetchList().then(res => {
+        state.list = res
+      })
+    }) 
     
     function handleAdd(item) {
       state.list.push(item)
@@ -96,7 +102,7 @@
     }
 
     return { 
-      state, 
+      list: state.list, 
       unDoList,
       doneList, 
       handleAdd,
@@ -108,16 +114,9 @@
 
   const app = createApp({
     setup() {
-      let { state, unDoList, doneList, handleAdd, handleDel, handleToogle } = useList()
-
-      onMounted(() => {
-        fetchList().then(res => {
-          state.list = res
-        })
-      }) 
-
+      const { list, unDoList, doneList, handleAdd, handleDel, handleToogle } = useList()
       return { 
-        list: state.list, 
+        list, 
         unDoList,
         doneList, 
         handleAdd,
