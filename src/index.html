@@ -52,41 +52,14 @@
 <script src="https://unpkg.com/vue@next"></script>
 <script>
   const { createApp, ref, toRefs, reactive, computed, watchEffect, onMounted, onUnmounted } = Vue
-  // 1 未完成 2. 完成 
-  const todoList = {
-    list: [
-      {
-        id: '1',
-        title: '看书',
-        status: 1,
-      },
-      {
-        id: '2',
-        title: '写作',
-        status: 1,
-      },
-    ],
-    fetchList() {
-      return new Promise((res, rej) => {
-        setTimeout(() => {
-          res(this.list)
-        }, 1000)
-      })
-    },
-  }
 
+  // todoList模块方法
   function useList() {
     let list = reactive([])
     const unDoList = computed(() => list.filter(v => v.status == 1))
     const doneList = computed(() => list.filter(v => v.status == 2))
-
-    // onMounted(() => {
-    //   todoList.fetchList().then(res => {
-    //     list = res
-    //     debugger
-    //   })
-    // })
-
+  
+    // 1 未完成 2. 完成 
     function reversalStatus(status) {
       return status == '1' ? '2' : '1'
     }
