@@ -53,11 +53,25 @@
 <script>
   const { createApp, ref, toRefs, reactive, computed, watchEffect, onMounted, onUnmounted } = Vue
 
+  function fetchList() {
+    return new Promise((res, rej) => {
+      setTimeout(() => {
+        res([{
+          id:'1',
+          title: '学习Vue3',
+          status: '1'
+        }])
+      }, 1000)
+    })
+  }
+
   // todoList模块方法
   function useList() {
-    let list = reactive([])
-    const unDoList = computed(() => list.filter(v => v.status == 1))
-    const doneList = computed(() => list.filter(v => v.status == 2))
+    let state = reactive({
+      list:[]
+    })
+    const unDoList = computed(() => state.list.filter(v => v.status == 1))
+    const doneList = computed(() => state.list.filter(v => v.status == 2))
   
     // 1 未完成 2. 完成 
     function reversalStatus(status) {
@@ -65,16 +79,16 @@
     }
     
     function handleAdd(item) {
-      list.push(item)
+      state.list.push(item)
     }
 
     function handleDel(id) {
-      const idx = list.findIndex(item => item.id == id)
-      list.splice(idx, 1)
+      const idx = state.list.findIndex(item => item.id == id)
+      state.list.splice(idx, 1)
     }
 
     function handleToogle(id) {
-      list.forEach(item => {
+      state.list.forEach(item => {
         if(item.id == id) {
           item.status = reversalStatus(item.status)
         }
@@ -82,7 +96,7 @@
     }
 
     return { 
-      list: list, 
+      state, 
       unDoList,
       doneList, 
       handleAdd,
@@ -94,9 +108,16 @@
 
   const app = createApp({
     setup() {
-      const { list, unDoList, doneList, handleAdd, handleDel, handleToogle } = useList()
+      let { state, unDoList, doneList, handleAdd, handleDel, handleToogle } = useList()
+
+      onMounted(() => {
+        fetchList().then(res => {
+          state.list = res
+        })
+      }) 
+
       return { 
-        list, 
+        list: state.list, 
         unDoList,
         doneList, 
         handleAdd,
